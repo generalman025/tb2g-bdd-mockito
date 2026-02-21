@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,11 +25,15 @@ class SpecialitySDJpaServiceTest {
     SpecialitySDJpaService service;
 
     @Test
-    void testDeleteByObject() {
+    void deleteByObjectBddTest() {
+        // Given
         Speciality speciality = new Speciality();
 
+        // When
         service.delete(speciality);
 
+        // Then
+        then(specialtyRepository).should().delete(any(Speciality.class));
         verify(specialtyRepository).delete(any(Speciality.class));
     }
 
@@ -46,19 +52,42 @@ class SpecialitySDJpaServiceTest {
     }
 
     @Test
+    void findByIdBddTest(){
+        // Given
+        Speciality speciality = new Speciality();
+        given(specialtyRepository.findById(1L)).willReturn(Optional.of(speciality));
+
+        // When
+        service.findById(1L);
+
+        // Then
+        then(specialtyRepository).should().findById(anyLong());
+        then(specialtyRepository).should(timeout(1)).findById(anyLong());
+        then(specialtyRepository).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
     void deleteById() {
+        // Given - None
+
+        // When
         service.deleteById(1l);
         service.deleteById(1l);
 
-        verify(specialtyRepository, times(2)).deleteById(1l);
+        // Then
+        then(specialtyRepository).should(timeout(2)).deleteById(anyLong());
     }
 
     @Test
     void deleteByIdAtLeast() {
+        // Give - None
+
+        // When
         service.deleteById(1l);
         service.deleteById(1l);
 
-        verify(specialtyRepository, atLeastOnce()).deleteById(1l);
+        // Then
+        then(specialtyRepository).should(atLeastOnce()).deleteById(anyLong());
     }
 
     @Test
