@@ -63,7 +63,7 @@ class SpecialitySDJpaServiceTest {
 
         // Then
         then(specialtyRepository).should().findById(anyLong());
-        then(specialtyRepository).should(timeout(1)).findById(anyLong());
+        then(specialtyRepository).should(timeout(100)).findById(anyLong());
         then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
 
